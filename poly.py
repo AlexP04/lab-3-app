@@ -102,7 +102,7 @@ class Builder(object):
         
         if self.fmode==1:
             # for trygonometry functions
-            if self.symbol = "cos" or self.symbol = "sin":
+            if self.symbol == "cos" or self.symbol == "sin":
                 if mode == 1:
                     for n in range(len(self.lvl1[i][j][k])):
                         texts.append(r'(1 + \mathrm{{{func}}}(2 \pi \cdot \{symbol}({deg} \cdot x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
@@ -255,17 +255,14 @@ class Builder(object):
         self.__compose_lambdas__()
         if self.fmode == 1:
             lvl1_texts = [r'$1 + \Psi_{{{1}{2}}}^{{[{0}]}}(x_{{{1}{2}}}) = {result}$'.format(i+1, j+1, k+1, result=self.__print_1__(1, i, j, k)) + '\n' for i in range(self._solution.Y.shape[1]) for j in range(3) for k in range(self._solution.dim[j])]
-            lvl2_texts = [r'1 + $\Phi_{{{0}{1}}}(x_{{{1}}}) = {result}$'.format(i+1, j+1, result=self.__print_1__(2, i, j)) + '\n'
-                       for i in range(self._solution.Y.shape[1])
-                       for j in range(3)]
+            
+            lvl2_texts = [r'1 + $\Phi_{{{0}{1}}}(x_{{{1}}}) = {result}$'.format(i+1, j+1, result=self.__print_1__(2, i, j)) + '\n' for i in range(self._solution.Y.shape[1]) for j in range(3)]
+            
             f_texts = [r'1 + $\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1, result=self.__print_1__(3, i)) + '\n'
                      for i in range(self._solution.Y.shape[1])]
             f_texts_l = [r'$\Phi_{i}(x_1, x_2, x_3) = {result}$'.format(i=i+1, result=self.__print_final_2__(i)) + '\n' 
                                 for i in range(self._solution.Y.shape[1])]
-            res = [r'$\Phi_i$ derived from $\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l +
-            [r'$\Phi_i$:' + '\n'] + f_texts + 
-            [r'$\Phi_{ik}$:' + '\n'] + lvl2_texts+ 
-            [r'$\Psi$:' + '\n'] + lvl1_texts 
+            res = [r'$\Phi_i$ derived from $\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l + [r'$\Phi_i$:' + '\n'] + f_texts + [r'$\Phi_{ik}$:' + '\n'] + lvl2_texts + [r'$\Psi$:' + '\n'] + lvl1_texts 
         else:
             lvl1_texts = [r'$\Psi_{{{1}{2}}}^{{[{0}]}}(x_{{{1}{2}}}) = {result}$'.format(i+1, j+1, k+1, result=self.__print_1__(1, i, j, k)) + '\n' for i in range(self._solution.Y.shape[1]) for j in range(3) for k in range(self._solution.dim[j])]
 
@@ -275,15 +272,13 @@ class Builder(object):
             f_texts = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1, result=self.__print_1__(3, i)) + '\n'
                          for i in range(self._solution.Y.shape[1])]
             f_texts_t = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1,result=self.__print_final_1__(i)) + '\n' for i in range(self._solution.Y.shape[1])]
+            
             f_texts_td = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(
                                                 i+1, result=self.__print_2__(i)) + '\n'
                                                 for i in range(self._solution.Y.shape[1])]
             f_texts_l = [r'$\Phi_{i}(x_1, x_2, x_3) = {result}$'.format(i=i+1, result=self.__print_final_2__(i)) + '\n' 
                                     for i in range(self._solution.Y.shape[1])]
-            res =  [r'$\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l +
-            [r'$\Phi_i$' + f'from polinom {self._solution.polynomial_type}:' + '\n'] + f_texts + 
-            [r'$\Phi_i$ not normalized:' + '\n'] + f_texts_td+
-            [r'$\Phi_i$ normalized:' + '\n'] + f_texts_t
+            res =  [r'$\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l + [r'$\Phi_i$' + f'from polinom {self._solution.polynomial_type}:' + '\n'] + f_texts + [r'$\Phi_i$ not normalized:' + '\n'] + f_texts_td+ [r'$\Phi_i$ normalized:' + '\n'] + f_texts_t
         
         return '\n'.join(
            res
