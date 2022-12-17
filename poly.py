@@ -67,7 +67,6 @@ class Builder(object):
             self.symbol = 'cos'
         
         self.fmode = self._solution.fmode
-        self.basis = basis(degree, solution.polynomial_type) 
 
         self.a = solution.a.T.tolist()
         self.c = solution.c.T.tolist()
