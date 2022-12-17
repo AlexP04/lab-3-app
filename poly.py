@@ -55,15 +55,15 @@ class Builder(object):
         self._solution = solution
         degree = max(solution.degree) - 1
         
-        if solution.poly_type == 'Chebyshev':
+        if solution.polynomial_type == 'Chebyshev':
             self.symbol = 'T'
             self.basis = basis(degree,mode = 'chebyshev')
-        elif solution.poly_type == 'Chebyshev shifted':
+        elif solution.polynomial_type == 'Chebyshev shifted':
             self.symbol = 'U^*'
             self.basis =  basis(degree,mode = 'chebyshev shifted')
-        elif solution.poly_type == 'Sinus based':
+        elif solution.polynomial_type == 'Sinus based':
             self.symbol = 'sin'
-        elif solution.poly_type == 'Cosinus based':
+        elif solution.polynomial_type == 'Cosinus based':
             self.symbol = 'cos'
         
         self.fmode = self._solution.fmode
