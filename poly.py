@@ -55,16 +55,16 @@ class Builder(object):
         self._solution = solution
         degree = max(solution.degree) - 1
         
-        if solution.poly_type == 'Chebyshev 1 type':
+        if solution.poly_type == 'Chebyshev':
             self.symbol = 'T'
             self.basis = basis(degree,mode = 'chebyshev')
-        elif solution.poly_type == 'Зсунуті поліноми Чебишова 2 роду':
+        elif solution.poly_type == 'Chebyshev shifted':
             self.symbol = 'U^*'
             self.basis =  basis(degree,mode = 'chebyshev shifted')
-        elif solution.poly_type == 'Тригонометричні (косинуси)':
-            self.symbol = 'cos'
-        elif solution.poly_type == 'Тригонометричні (синуси)':
+        elif solution.poly_type == 'Sinus based':
             self.symbol = 'sin'
+        elif solution.poly_type == 'Cosinus based':
+            self.symbol = 'cos'
         
         self.fmode = self._solution.fmode
         self.basis = basis(degree, solution.polynomial_type) 

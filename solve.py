@@ -94,13 +94,13 @@ class Solve(object):
     
     #Filling poly_function field based on polynom type :: public
     def poly_func(self):
-        if self.poly_type == 'Chebyshev 1 type':
+        if self.poly_type == 'Chebyshev':
             self.poly_f = special.eval_chebyt
         elif self.poly_type == 'Cosinus based':
             self.poly_f = lambda deg, x: np.cos(2 * np.pi * deg * x)
         elif self.poly_type == 'Sinus based':
             self.poly_f = lambda deg, x: np.sin(2 * np.pi * deg * x)
-        elif self.poly_type == 'Shifted chebyshev polynoms 2 type':
+        elif self.poly_type == 'Chebyshev shifted':
             self.poly_f = lambda deg, x: special.eval_sh_chebyu(deg, x) / (deg + 1)
         
     #Initializing b :: public
