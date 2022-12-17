@@ -83,7 +83,7 @@ if main.button('Run', key='run'):
         with st.spinner('...'):
             solver, degrees = get_solution(params, pbar_container=main, max_deg=20) 
       
-        solution = Builder(solver, function_packed = sigmoid_list) 
+        solution = Builder(solver) 
 
         #Showing and plotting errors
         error_cols = st.columns(2)
