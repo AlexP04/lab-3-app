@@ -75,7 +75,7 @@ if main.button('Run', key='run'):
             'degrees': [degree_1, degree_2, degree_3],
             'polynomial_type': use_type,
             'lambda': lambdas,
-            'mode': function_struct
+            'mode': function_struct*1
         }
       
         
