@@ -67,7 +67,10 @@ class Builder(object):
             self.symbol = 'cos'
         
         self.fmode = self._solution.fmode
-
+        try:
+            self.basis = basis(degree,mode = solution.polynomial_type)
+        except:
+            self.basis = []
         self.a = solution.a.T.tolist()
         self.c = solution.c.T.tolist()
         self.minX = [X.min(axis=0).ravel() for X in solution.X_]
@@ -113,7 +116,7 @@ class Builder(object):
         
         if self.fmode==1:
             # for trygonometry functions
-            if self.symbol == "cos" or self.symbol == "sin":
+            if self.symbol == 'cos' or self.symbol == 'sin':
                 if mode == 1:
                     for n in range(len(self.lvl1[i][j][k])):
                         texts.append(r'(1 + \mathrm{{{func}}}(2 \pi \cdot \{symbol}({deg} \cdot x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
@@ -167,31 +170,58 @@ class Builder(object):
                                 ))
                 
         else:
-            if mode == 1:
-                for n in range(len(self.lvl1[i][j][k])):
-                    texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
-                        self.lvl1[i][j][k][n], 
-                        j+1, k+1, deg=n
-                    ))
-
-            elif mode == 2:
-                for k in range(len(self.lvl1[i][j])):
-                    shift = sum(self._solution.dim[:j]) + k
+            if self.symbol == 'cos' or self.symbol == 'sin':
+                if mode == 1:
                     for n in range(len(self.lvl1[i][j][k])):
-                        texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
-                            self.a[i][shift] * self.lvl1[i][j][k][n],
+                        texts.append(r'(1 + \{symbol}(2 \pi \cdot {deg}\cdot x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
+                            self.lvl1[i][j][k][n], 
                             j+1, k+1, deg=n
                         ))
 
+                elif mode == 2:
+                    for k in range(len(self.lvl1[i][j])):
+                        shift = sum(self._solution.dim[:j]) + k
+                        for n in range(len(self.lvl1[i][j][k])):
+                            texts.append(r'(1 + \{symbol}(2 \pi \cdot {deg}\cdot x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
+                                self.a[i][shift] * self.lvl1[i][j][k][n],
+                                j+1, k+1, deg=n, symbol = self.symbol
+                            ))
+
+                else:
+                    for j in range(3):
+                        for k in range(len(self.lvl1[i][j])):
+                            shift = sum(self._solution.dim[:j]) + k
+                            for n in range(len(self.lvl1[i][j][k])):
+                                texts.append(r'(1 + \{symbol}(2 \pi \cdot {deg}\cdot x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
+                                    self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
+                                    j + 1, k + 1, deg=n, symbol = self.symbol
+                                ))
             else:
-                for j in range(3):
+                if mode == 1:
+                    for n in range(len(self.lvl1[i][j][k])):
+                        texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
+                            self.lvl1[i][j][k][n], 
+                            j+1, k+1, deg=n
+                        ))
+
+                elif mode == 2:
                     for k in range(len(self.lvl1[i][j])):
                         shift = sum(self._solution.dim[:j]) + k
                         for n in range(len(self.lvl1[i][j][k])):
                             texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
-                                self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
-                                j + 1, k + 1, deg=n
+                                self.a[i][shift] * self.lvl1[i][j][k][n],
+                                j+1, k+1, deg=n
                             ))
+
+                else:
+                    for j in range(3):
+                        for k in range(len(self.lvl1[i][j])):
+                            shift = sum(self._solution.dim[:j]) + k
+                            for n in range(len(self.lvl1[i][j][k])):
+                                texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
+                                    self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
+                                    j + 1, k + 1, deg=n
+                                ))
             
                         
         res = ' + '.join(texts).replace('+ -', ' -')
