@@ -94,19 +94,15 @@ class Solve(object):
     
     #Filling poly_function field based on polynom type :: public
     def poly_func(self):
-        if self.polynomial_type == 'Legendre':
-            self.poly_function = special.eval_sh_legendre
-        elif self.polynomial_type == 'Laguerre':
-            self.poly_function = special.eval_laguerre
-        elif self.polynomial_type == 'Hermite':
-            self.poly_function = special.eval_hermite
-        else:
-            self.poly_function = special.eval_sh_chebyt
+        if self.poly_type == 'Chebyshev 1 type':
+            self.poly_f = special.eval_chebyt
+        elif self.poly_type == 'Cosinus based':
+            self.poly_f = lambda deg, x: np.cos(2 * np.pi * deg * x)
+        elif self.poly_type == 'Sinus based':
+            self.poly_f = lambda deg, x: np.sin(2 * np.pi * deg * x)
+        elif self.poly_type == 'Shifted chebyshev polynoms 2 type':
+            self.poly_f = lambda deg, x: special.eval_sh_chebyu(deg, x) / (deg + 1)
         
-#     #Method of initializing beta using Y :: private
-#     def __implement_scale_for_b__(self):
-#         return copy.deepcopy(self.Y)
-    
     #Initializing b :: public
     def implement_b(self):
         self.b = deepcopy(self.Y)

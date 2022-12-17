@@ -30,7 +30,20 @@ def basis(degree, mode):
         for i in range(degree):
             basis.append(pm([0,2])*basis[-1] - 2 * i * basis[-2])
         del basis[0]
-                             
+        
+    
+    elif mode == 'chebyshev shifted':
+        basis = [pm([1])]
+        for i in range(degree):
+            if i == 0:
+                basis.append(pm([-2,4]))
+                continue
+            basis.append(pm([-2, 4]) * basis[-1] - basis[-2])
+        for i in range(degree):
+            basis[i] /= (i + 1)
+        return basis
+
+    
     else:
         #Exception if type is not matching
         raise ValueError("Mode "+str(mode)+" is not allowed")
