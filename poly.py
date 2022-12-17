@@ -66,8 +66,9 @@ class Builder(object):
         self.maxY = solution.Y_.max(axis=0).ravel()
         
         #specifying function to use
-        self.func = solution.func_name
-        self.func_inv = solution.func_inv
+        if self._solution.fmode == 1:
+            self.func = self._solution.func
+            self.func_inv = self._solution.func_inv
     
     #Standartize coeficients for polynom :: private
     def __standardtize__(self, c):

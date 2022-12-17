@@ -218,15 +218,15 @@ class Solve(object):
         return np.array(lvl2)
     
     #Same as for lvl1 - just next level :: public
-    def process_lvl2(self, fmode = 0):
+    def process_lvl2(self):
         self.lvl2 = []
         self.Llvl2 = []
         for i in range(self.dim[3]):
-            if fmode == 1:
+            if self.fmode == 1:
                 self.Llvl2.append(np.log(self.f(self.__get_second_level_function__(self.Llvl1[i],self.a[:,i]))+ 1 + self.accuracy/10000))
                 self.lvl2.append(np.exp(self.Llvl2[-1]))
             else:
-                self.lvl2.append(self.__get_second_level_function__(self.lvl1[i],self.a[:,i]))
+                self.lvl2.append(self.__get_second_level_function__(self.lvl1[i], self.a[:,i]))
         self.lvl2 = np.array(self.lvl2)
         self.Llvl2 = np.array(self.Llvl2)
         
@@ -235,9 +235,9 @@ class Solve(object):
         
         self.c = np.ndarray(shape = (len(self.X),0),dtype = float)
         for i in range(self.dim[3]):
-            if fmode == 1:
+            if self.fmode == 1:
                 J = np.log(self.f(self.Llvl2[i].T)+1+self.accuracy/10000)
-                A = J@J
+                A = J@J.T
                 b = J@ self.Y[:,i]
             else:
                 A = self.lvl2[i].T @ self.lvl2[i]
