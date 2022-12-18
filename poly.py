@@ -121,7 +121,7 @@ class Builder(object):
                     for n in range(len(self.lvl1[i][j][k])):
                         texts.append(r'(1 + \mathrm{{{func}}}(2 \pi \cdot \{symbol}({deg} \cdot x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
                             self.lvl1[i][j][k][n], 
-                            j+1, k+1, deg=n, func=self.func
+                            j+1, k+1, deg=n, symbol = self.symbol, func=self.func
                         ))
 
                 elif mode == 2:
@@ -147,7 +147,7 @@ class Builder(object):
                     for n in range(len(self.lvl1[i][j][k])):
                         texts.append(r'(1 + \mathrm{{{func}}}({symbol}_{{{deg}}}(x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
                             self.lvl1[i][j][k][n], 
-                            j+1, k+1, deg=n, func=self.func
+                            j+1, k+1, deg=n,symbol = self.symbol, func=self.func
                         ))
 
                 elif mode == 2:
@@ -175,7 +175,7 @@ class Builder(object):
                     for n in range(len(self.lvl1[i][j][k])):
                         texts.append(r'(1 + \{symbol}(2 \pi \cdot {deg}\cdot x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
                             self.lvl1[i][j][k][n], 
-                            j+1, k+1, deg=n
+                            j+1, k+1,symbol = self.symbol, deg=n
                         ))
 
                 elif mode == 2:
