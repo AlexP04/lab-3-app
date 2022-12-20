@@ -67,10 +67,10 @@ class Builder(object):
             self.symbol = 'cos'
         
         self.fmode = self._solution.fmode
-        try:
-            self.basis = basis(degree,mode = solution.polynomial_type)
-        except:
-            self.basis = []
+#         try:
+#             self.basis = basis(degree,mode = solution.polynomial_type)
+#         except:
+#             self.basis = []
         self.a = solution.a.T.tolist()
         self.c = solution.c.T.tolist()
         self.minX = [X.min(axis=0).ravel() for X in solution.X_]
@@ -253,9 +253,11 @@ class Builder(object):
                 
         res = ' + '.join(texts).replace('+ -', '- ')
         return res
+        
 
     #Prints F-function in special form (just another form) :: private
     def __print_2__(self, i):
+        
         texts = list()
         for j in range(3):
             for k in range(len(self.lvl1[i][j])):
@@ -274,10 +276,9 @@ class Builder(object):
     def __print_final_2__(self, i):
         if self.fmode == 1:
             res = []
-            
             for j in range(3):
                 coef = self.c[i][j]
-                res.append(f'(1 + \\Phi_{{{i+1}{j+1}}} (x_{j+1}))^{{{coef:.6f}}}')
+                res.append(f'(1 + \\mathrm{{{self.func}}}(\\Phi_{{{i+1}{j+1}}} (x_{j+1})))^{{{coef:.6f}}}')
             return '\cdot'.join(res) + ' - 1'
         else:
             res = ''
@@ -310,14 +311,14 @@ class Builder(object):
                            for j in range(3)]
             f_texts = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1, result=self.__print_1__(3, i)) + '\n'
                          for i in range(self._solution.Y.shape[1])]
-            f_texts_t = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1,result=self.__print_final_1__(i)) + '\n' for i in range(self._solution.Y.shape[1])]
+#             f_texts_t = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1,result=self.__print_final_1__(i)) + '\n' for i in range(self._solution.Y.shape[1])]
             
-            f_texts_td = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(
-                                                i+1, result=self.__print_2__(i)) + '\n'
-                                                for i in range(self._solution.Y.shape[1])]
+#             f_texts_td = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(
+#                                                 i+1, result=self.__print_2__(i)) + '\n'
+#                                                 for i in range(self._solution.Y.shape[1])]
             f_texts_l = [r'$\Phi_{i}(x_1, x_2, x_3) = {result}$'.format(i=i+1, result=self.__print_final_2__(i)) + '\n' 
                                     for i in range(self._solution.Y.shape[1])]
-            res =  [r'$\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l + [r'$\Phi_i$' + f'from polinom {self._solution.polynomial_type}:' + '\n'] + f_texts + [r'$\Phi_i$ not normalized:' + '\n'] + f_texts_td+ [r'$\Phi_i$ normalized:' + '\n'] + f_texts_t
+            res = [r'$\Phi_i$ derived from $\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l + [r'$\Phi_i$:' + '\n'] + f_texts + [r'$\Phi_{ik}$:' + '\n'] + lvl2_texts + [r'$\Psi$:' + '\n'] + lvl1_texts 
         
         return '\n'.join(
            res
