@@ -56,21 +56,13 @@ class Builder(object):
         degree = max(solution.degree) - 1
         
         if solution.polynomial_type == 'Chebyshev':
-            self.symbol = 'T'
+            self.symbol = 'P'
             self.basis = basis(degree,mode = 'chebyshev')
         elif solution.polynomial_type == 'Chebyshev shifted':
-            self.symbol = 'U^*'
+            self.symbol = 'P^*'
             self.basis =  basis(degree,mode = 'chebyshev shifted')
-        elif solution.polynomial_type == 'Sinus based':
-            self.symbol = 'sin'
-        elif solution.polynomial_type == 'Cosinus based':
-            self.symbol = 'cos'
         
         self.fmode = self._solution.fmode
-#         try:
-#             self.basis = basis(degree,mode = solution.polynomial_type)
-#         except:
-#             self.basis = []
         self.a = solution.a.T.tolist()
         self.c = solution.c.T.tolist()
         self.minX = [X.min(axis=0).ravel() for X in solution.X_]
@@ -115,113 +107,58 @@ class Builder(object):
         texts = list()
         
         if self.fmode==1:
-            # for trygonometry functions
-            if self.symbol == 'cos' or self.symbol == 'sin':
-                if mode == 1:
+            if mode == 1:
+                for n in range(len(self.lvl1[i][j][k])):
+                    texts.append(r'(1 + \mathrm{{{func}}}({symbol}_{{{deg}}}(x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
+                        self.lvl1[i][j][k][n], 
+                        j+1, k+1, deg=n,symbol = self.symbol, func=self.func
+                    ))
+
+            elif mode == 2:
+                for k in range(len(self.lvl1[i][j])):
+                    shift = sum(self._solution.dim[:j]) + k
                     for n in range(len(self.lvl1[i][j][k])):
-                        texts.append(r'(1 + \mathrm{{{func}}}(2 \pi \cdot \{symbol}({deg} \cdot x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
-                            self.lvl1[i][j][k][n], 
+                        texts.append(r'(1 + \mathrm{{{func}}}({symbol}_{{{deg}}}(x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
+                            self.a[i][shift] * self.lvl1[i][j][k][n],
                             j+1, k+1, deg=n, symbol = self.symbol, func=self.func
                         ))
 
-                elif mode == 2:
-                    for k in range(len(self.lvl1[i][j])):
-                        shift = sum(self._solution.dim[:j]) + k
-                        for n in range(len(self.lvl1[i][j][k])):
-                            texts.append(r'(1 + \mathrm{{{func}}}(2 \pi \cdot \{symbol}({deg} \cdot x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
-                                self.a[i][shift] * self.lvl1[i][j][k][n],
-                                j+1, k+1, deg=n, symbol = self.symbol, func=self.func
-                            ))
-
-                else:
-                    for j in range(3):
-                        for k in range(len(self.lvl1[i][j])):
-                            shift = sum(self._solution.dim[:j]) + k
-                            for n in range(len(self.lvl1[i][j][k])):
-                                texts.append(r'(1 + \mathrm{{{func}}}(2 \pi \cdot \{symbol}({deg} \cdot x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
-                                    self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
-                                    j + 1, k + 1, deg=n, symbol = self.symbol, func=self.func
-                                ))
             else:
-                if mode == 1:
-                    for n in range(len(self.lvl1[i][j][k])):
-                        texts.append(r'(1 + \mathrm{{{func}}}({symbol}_{{{deg}}}(x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
-                            self.lvl1[i][j][k][n], 
-                            j+1, k+1, deg=n,symbol = self.symbol, func=self.func
-                        ))
-
-                elif mode == 2:
+                for j in range(3):
                     for k in range(len(self.lvl1[i][j])):
                         shift = sum(self._solution.dim[:j]) + k
                         for n in range(len(self.lvl1[i][j][k])):
                             texts.append(r'(1 + \mathrm{{{func}}}({symbol}_{{{deg}}}(x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
-                                self.a[i][shift] * self.lvl1[i][j][k][n],
-                                j+1, k+1, deg=n, symbol = self.symbol, func=self.func
+                                self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
+                                j + 1, k + 1, deg=n, symbol = self.symbol, func=self.func
                             ))
-
-                else:
-                    for j in range(3):
-                        for k in range(len(self.lvl1[i][j])):
-                            shift = sum(self._solution.dim[:j]) + k
-                            for n in range(len(self.lvl1[i][j][k])):
-                                texts.append(r'(1 + \mathrm{{{func}}}({symbol}_{{{deg}}}(x_{{{1}{2}}})))^{{{0:.6f}}}'.format(
-                                    self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
-                                    j + 1, k + 1, deg=n, symbol = self.symbol, func=self.func
-                                ))
                 
         else:
-            if self.symbol == 'cos' or self.symbol == 'sin':
-                if mode == 1:
-                    for n in range(len(self.lvl1[i][j][k])):
-                        texts.append(r'(1 + \{symbol}(2 \pi \cdot {deg}\cdot x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
-                            self.lvl1[i][j][k][n], 
-                            j+1, k+1,symbol = self.symbol, deg=n
-                        ))
+            if mode == 1:
+                for n in range(len(self.lvl1[i][j][k])):
+                    texts.append(r'(1 + {symbol}_{{{deg}}}(x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
+                        self.lvl1[i][j][k][n], 
+                        j+1, k+1, deg=n, symbol = self.symbol
+                    ))
 
-                elif mode == 2:
-                    for k in range(len(self.lvl1[i][j])):
-                        shift = sum(self._solution.dim[:j]) + k
-                        for n in range(len(self.lvl1[i][j][k])):
-                            texts.append(r'(1 + \{symbol}(2 \pi \cdot {deg}\cdot x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
-                                self.a[i][shift] * self.lvl1[i][j][k][n],
-                                j+1, k+1, deg=n, symbol = self.symbol
-                            ))
-
-                else:
-                    for j in range(3):
-                        for k in range(len(self.lvl1[i][j])):
-                            shift = sum(self._solution.dim[:j]) + k
-                            for n in range(len(self.lvl1[i][j][k])):
-                                texts.append(r'(1 + \{symbol}(2 \pi \cdot {deg}\cdot x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
-                                    self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
-                                    j + 1, k + 1, deg=n, symbol = self.symbol
-                                ))
-            else:
-                if mode == 1:
+            elif mode == 2:
+                for k in range(len(self.lvl1[i][j])):
+                    shift = sum(self._solution.dim[:j]) + k
                     for n in range(len(self.lvl1[i][j][k])):
                         texts.append(r'(1 + {symbol}_{{{deg}}}(x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
-                            self.lvl1[i][j][k][n], 
+                            self.a[i][shift] * self.lvl1[i][j][k][n],
                             j+1, k+1, deg=n, symbol = self.symbol
                         ))
 
-                elif mode == 2:
+            else:
+                for j in range(3):
                     for k in range(len(self.lvl1[i][j])):
                         shift = sum(self._solution.dim[:j]) + k
                         for n in range(len(self.lvl1[i][j][k])):
                             texts.append(r'(1 + {symbol}_{{{deg}}}(x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
-                                self.a[i][shift] * self.lvl1[i][j][k][n],
-                                j+1, k+1, deg=n, symbol = self.symbol
+                                self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
+                                j + 1, k + 1, deg=n, symbol = self.symbol
                             ))
-
-                else:
-                    for j in range(3):
-                        for k in range(len(self.lvl1[i][j])):
-                            shift = sum(self._solution.dim[:j]) + k
-                            for n in range(len(self.lvl1[i][j][k])):
-                                texts.append(r'(1 + {symbol}_{{{deg}}}(x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
-                                    self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
-                                    j + 1, k + 1, deg=n, symbol = self.symbol
-                                ))
             
                         
         res = ' + '.join(texts).replace('+ -', ' -')
@@ -305,11 +242,7 @@ class Builder(object):
                            for j in range(3)]
             f_texts = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1, result=self.__print_1__(3, i)) + '\n'
                          for i in range(self._solution.Y.shape[1])]
-#             f_texts_t = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1,result=self.__print_final_1__(i)) + '\n' for i in range(self._solution.Y.shape[1])]
-            
-#             f_texts_td = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(
-#                                                 i+1, result=self.__print_2__(i)) + '\n'
-#                                                 for i in range(self._solution.Y.shape[1])]
+
             f_texts_l = [r'$\Phi_{i}(x_1, x_2, x_3) = {result}$'.format(i=i+1, result=self.__print_final_2__(i)) + '\n' 
                                     for i in range(self._solution.Y.shape[1])]
             res = [r'$\Phi_i$ derived from $\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l + [r'$\Phi_i$:' + '\n'] + f_texts + [r'$\Phi_{ik}$:' + '\n'] + lvl2_texts + [r'$\Psi$:' + '\n'] + lvl1_texts 

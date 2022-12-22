@@ -54,7 +54,7 @@ degree_3 = degs.number_input('Degree for X3', value=7, step=1, key='degree_3')
 
 #Additional input section, some specifications
 add.header('Input other parameters ')
-use_type = add.radio('Polynomial type used: ', ['Chebyshev', 'Chebyshev shifted', 'Cosinus based', 'Sinus based'])
+use_type = add.radio('Polynomial type used: ', ['Chebyshev', 'Chebyshev shifted'])
 function_struct = add.checkbox('Enable custom function')
 lambdas =  add.checkbox('Enable search for lambdas')
 normalize = add.checkbox('Plot normalized plots ')

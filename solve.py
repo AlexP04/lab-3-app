@@ -96,10 +96,6 @@ class Solve(object):
     def poly_func(self):
         if self.polynomial_type == 'Chebyshev':
             self.poly_function = special.eval_chebyt
-        elif self.polynomial_type == 'Cosinus based':
-            self.poly_function = lambda deg, x: np.cos(2 * np.pi * deg * x)
-        elif self.polynomial_type == 'Sinus based':
-            self.poly_function = lambda deg, x: np.sin(2 * np.pi * deg * x)
         elif self.polynomial_type == 'Chebyshev shifted':
             self.poly_function = lambda deg, x: special.eval_sh_chebyu(deg, x) / (deg + 1)
         
