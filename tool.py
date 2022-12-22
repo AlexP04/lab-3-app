@@ -13,7 +13,7 @@ def get_err(params):
     #Using Solve class defined - get full info about errors
     params_new = params[-1].copy()
     params_new['degrees'] = [*(params[:-1])]
-    solver = Solve(params_new, function_packed = sigmoid_list)
+    solver = Solve(params_new, function_packed = tanh_list)
     solver.run()
     
     normed_error = min(solver.norm_error)
@@ -59,7 +59,7 @@ def get_solution(params, pbar_container, max_deg=15):
     #Get solution and solver object
     final_params = params.copy()
     final_params['degrees'] = results[0][0]
-    solver = Solve(final_params, function_packed = sigmoid_list)
+    solver = Solve(final_params, function_packed = tanh_list)
     
     #Run solver
     solver.run()
