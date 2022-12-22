@@ -279,19 +279,13 @@ class Builder(object):
             for j in range(3):
                 coef = self.c[i][j]
                 res.append(f'(1 + \\mathrm{{{self.func}}}(\\Phi_{{{i+1}{j+1}}} (x_{j+1})))^{{{coef:.6f}}}')
-            return '\cdot'.join(res) + ' - 1'
         else:
-            res = ''
+            res = []
             for j in range(3):
                 coef = self.c[i][j]
-                if coef >= 0:
-                    res.append(f'(1 + \\Phi_{{{i+1}{j+1}}} (x_{j+1}))^{{{coef:.6f}}}')
-                else:
-                    res.append(f'(1 + \\Phi_{{{i+1}{j+1}}} (x_{j+1}))^{{{coef:.6f}}}')
-            if self.c[i][0] >= 0:
-                return '\cdot'.join(res[2:-1]) + ' - 1'
-            else:
-                return '\cdot'.join(res[:-1]) + ' - 1'
+                res.append(f'(1 + \\Phi_{{{i+1}{j+1}}} (x_{j+1}))^{{{coef:.6f}}}')
+        
+        return '\cdot'.join(res) + ' - 1'
         
     # Method to get refined result, generates final string of result :: public
     def get_results(self):
