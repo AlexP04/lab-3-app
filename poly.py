@@ -199,18 +199,18 @@ class Builder(object):
             else:
                 if mode == 1:
                     for n in range(len(self.lvl1[i][j][k])):
-                        texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
+                        texts.append(r'(1 + {symbol}_{{{deg}}}(x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
                             self.lvl1[i][j][k][n], 
-                            j+1, k+1, deg=n
+                            j+1, k+1, deg=n, symbol = self.symbol
                         ))
 
                 elif mode == 2:
                     for k in range(len(self.lvl1[i][j])):
                         shift = sum(self._solution.dim[:j]) + k
                         for n in range(len(self.lvl1[i][j][k])):
-                            texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
+                            texts.append(r'(1 + {symbol}_{{{deg}}}(x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
                                 self.a[i][shift] * self.lvl1[i][j][k][n],
-                                j+1, k+1, deg=n
+                                j+1, k+1, deg=n, symbol = self.symbol
                             ))
 
                 else:
@@ -218,9 +218,9 @@ class Builder(object):
                         for k in range(len(self.lvl1[i][j])):
                             shift = sum(self._solution.dim[:j]) + k
                             for n in range(len(self.lvl1[i][j][k])):
-                                texts.append(r'{0:.6f}\cdot P_{{{deg}}}(x_{{{1}{2}}})'.format(
+                                texts.append(r'(1 + {symbol}_{{{deg}}}(x_{{{1}{2}}}))^{{{0:.6f}}}'.format(
                                     self.c[i][j] * self.a[i][shift] * self.lvl1[i][j][k][n],
-                                    j + 1, k + 1, deg=n
+                                    j + 1, k + 1, deg=n, symbol = self.symbol
                                 ))
             
                         
@@ -279,20 +279,21 @@ class Builder(object):
             for j in range(3):
                 coef = self.c[i][j]
                 res.append(f'(1 + \\mathrm{{{self.func}}}(\\Phi_{{{i+1}{j+1}}} (x_{j+1})))^{{{coef:.6f}}}')
-            return '\cdot'.join(res) + ' - 1'
+            
         else:
             res = ''
             for j in range(3):
                 coef = self.c[i][j]
                 if coef >= 0:
-                    res += f'+ {coef:.6f} \\cdot \\Phi_{{{i+1}{j+1}}} (x_{j+1}) '
+                    res += f'(1 + \\Phi_{{{i+1}{j+1}}} (x_{j+1}))^{{{coef:.6f}}}'
                 else:
-                    res += f'- {-coef:.6f} \\cdot \\Phi_{{{i+1}{j+1}}} (x_{j+1})'
+                    res += f'(1 + \\Phi_{{{i+1}{j+1}}} (x_{j+1}))^{{{coef:.6f}}}'
             if self.c[i][0] >= 0:
-                return res[2:-1]
+                res = res[2:-1]
             else:
-                return res[:-1]
-        
+                res = res[:-1]
+        return '\cdot'.join(res) + ' - 1'
+    
     # Method to get refined result, generates final string of result :: public
     def get_results(self):
         self.__compose_lambdas__()
