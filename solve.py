@@ -23,7 +23,6 @@ class Solve(object):
         self.name_output = user_input['output_file']
         self.degree = list(map(lambda x:x+1,user_input['degrees']))
         self.polynomial_type = user_input['polynomial_type']
-        self.lambdas = user_input['lambda']
         
         self.norm_error = 0.0
         self.error = 0.0
@@ -145,15 +144,7 @@ class Solve(object):
     def lambdas_fill(self):
         l = np.ndarray(shape = (self.A.shape[1],0), dtype = float)
         for i in range(self.dim[3]):
-            if self.lambdas:
-                b_1 = self.degree[0] * self.dim[0]
-                b_2 = self.degree[1] * self.dim[1] + b_1
-                l_1 = self.__minimize_equation__(self.A[:, :b_1], self.b[:, i])
-                l_2 = self.__minimize_equation__(self.A[:, b_1:b_2], self.b[:, i])
-                l_3 = self.__minimize_equation__(self.A[:, b_2:], self.b[:, i])
-                l = np.append(l, np.concatenate((l_1, l_2, l_3)), axis=1)
-            else:
-                l = np.append(l, self.__minimize_equation__(self.A, self.b[:, i]), axis=1)
+            l = np.append(l, self.__minimize_equation__(self.A, self.b[:, i]), axis=1)
         
         self.L = np.array(l)
     
