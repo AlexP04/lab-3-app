@@ -161,7 +161,7 @@ class Builder(object):
                             ))
             
                         
-        res = ' + '.join(texts).replace('+ -', ' -')
+        res = ' \cdot'.join(texts) + " - 1"
         return res
 
     #Prints F-function in special form :: private
@@ -188,7 +188,7 @@ class Builder(object):
                     symbol='(x_{0}{1})'.format(j+1, k+1),
                     subscribe='{0}{1}'.format(j+1, k+1)).__print__()))
                 
-        res = ' + '.join(texts).replace('+ -', '- ')
+        res = '\cdot'.join(texts) + '- 1'
         return res
         
 
@@ -206,7 +206,7 @@ class Builder(object):
                     current_polynom, 
                     symbol="(x_"+str(j+1)+str(k+1)+")".format(j+1, k+1),
                     subscribe='{0}{1}'.format(j+1, k+1)).__print__()) )
-        res = ' + '.join(texts).replace('+ -', '- ')
+        res = ' \cdot '.join(texts)+" - 1 "
         return res
     
     # Prints F-function in special form (just another form) :: private
