@@ -44,7 +44,7 @@ class _Polynom(object):
             res = res.replace(self.symbol, r' x_{{{}}}'.format(self.subscribe))
             result.append(res)
             
-        return ''.join(result)
+        return ''.join(result).replace('+ -', '- ')
     
     
 #Class, that builds output for user of polynoms created
@@ -161,7 +161,7 @@ class Builder(object):
                             ))
             
                         
-        res = ' \cdot'.join(texts) + " - 1"
+        res = ' \cdot'.join(texts).replace('+ -', '- ')
         return res
 
     #Prints F-function in special form :: private
