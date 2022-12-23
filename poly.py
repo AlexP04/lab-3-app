@@ -235,12 +235,12 @@ class Builder(object):
 
             res = [r'$\Phi_i$ derived from $\Phi_{i1}(x_1)$, $\Phi_{i2}(x_2)$, $\Phi_{i3}(x_3)$:' + '\n'] + f_texts_l + [r'$\Phi_i$:' + '\n'] + f_texts + [r'$\Phi_{ik}$:' + '\n'] + lvl2_texts + [r'$\Psi$:' + '\n'] + lvl1_texts 
         else:
-            lvl1_texts = [r'$\Psi_{{{1}{2}}}^{{[{0}]}}(x_{{{1}{2}}}) = {result}$'.format(i+1, j+1, k+1, result=self.__print_1__(1, i, j, k)) + '\n' for i in range(self._solution.Y.shape[1]) for j in range(3) for k in range(self._solution.dim[j])]
+            lvl1_texts = [r'$\Psi_{{{1}{2}}}^{{[{0}]}}(x_{{{1}{2}}}) +1  = {result}$'.format(i+1, j+1, k+1, result=self.__print_1__(1, i, j, k)) + '\n' for i in range(self._solution.Y.shape[1]) for j in range(3) for k in range(self._solution.dim[j])]
 
-            lvl2_texts = [r'$\Phi_{{{0}{1}}}(x_{{{1}}}) = {result}$'.format(i+1, j+1, result=self.__print_1__(2, i, j)) + '\n'
+            lvl2_texts = [r'$\Phi_{{{0}{1}}}(x_{{{1}}})+1 = {result}$'.format(i+1, j+1, result=self.__print_1__(2, i, j)) + '\n'
                            for i in range(self._solution.Y.shape[1])
                            for j in range(3)]
-            f_texts = [r'$\Phi_{{{0}}}(x_1, x_2, x_3) = {result}$'.format(i + 1, result=self.__print_1__(3, i)) + '\n'
+            f_texts = [r'$\Phi_{{{0}}}(x_1, x_2, x_3)+1 = {result}$'.format(i + 1, result=self.__print_1__(3, i)) + '\n'
                          for i in range(self._solution.Y.shape[1])]
 
             f_texts_l = [r'$\Phi_{i}(x_1, x_2, x_3) = {result}$'.format(i=i+1, result=self.__print_final_2__(i)) + '\n' 
