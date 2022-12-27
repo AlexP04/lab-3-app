@@ -163,9 +163,11 @@ class Solve(object):
     #Processing first level for all dimensions of Y :: public
     def process_lvl1(self):
         self.Llvl1 = []
+        self.lvl1 = []
+        
         for i in range(self.dim[3]):
             self.Llvl1.append(self.__get_first_level_function__(self.L[:,i]))
-            
+        self.lvl1 = np.exp(self.Llvl1)   
     
     #Defining next level coeficients :: public
     def ays(self):
