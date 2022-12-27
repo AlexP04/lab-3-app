@@ -101,7 +101,10 @@ class Solve(object):
     #Initializing b :: public
     def implement_b(self):
         self.b = deepcopy(self.Y)
-       
+        if self.fmode == 1:
+            self.Lb = np.log( self.f(self.b) + 1 + self.accuracy/10000)
+        else:
+            self.Lb = np.log( self.b + 1 + self.accuracy/10000)
 
     def __get_coord_for_A__(self, x, deg):
         n = self.data.shape[0]
@@ -127,17 +130,21 @@ class Solve(object):
             vec = self.__res_for_A__(self.X[i],self.degree[i])
             A = np.append(A, vec,1)
             
-     
-        self.A = self.f(A) + 1 + self.accuracy/10000
+        if self.fmode == 1:
+            self.A = self.f(A) + 1 + self.accuracy/10000
+        else:
+            self.A = A + 1 + self.accuracy/10000
+            
         self.LA = np.log(self.A)
         self.A = np.exp(self.LA)
+
         self.A = np.array(A)
     
     #Finding lambdas if user want (if not - then simple take from A) :: public
     def lambdas_fill(self):
         l = np.ndarray(shape = (self.A.shape[1],0), dtype = float)
         for i in range(self.dim[3]):
-            l = np.append(l, self.__minimize_equation__(self.A, self.b[:, i]), axis=1)
+            l = np.append(l, self.__minimize_equation__(self.LA, self.Lb[:, i]), axis=1)
         
         self.L = np.array(l)
     
@@ -149,7 +156,6 @@ class Solve(object):
             for s in range(self.X[k].shape[1]):
                 for i in range(self.X[k].shape[0]):
                     lvl1[i,i_1] = self.LA[i,i_2:i_2+self.degree[k]] @ Lambda[i_2:i_2+self.degree[k]]
-         
                 i_2 += self.degree[k]
                 i_1 += 1
         return np.array(lvl1)
@@ -158,7 +164,7 @@ class Solve(object):
     def process_lvl1(self):
         self.Llvl1 = []
         for i in range(self.dim[3]):
-            self.Llvl1.append(np.log(self.f(self.__get_first_level_function__(self.L[:,i]))+ 1 + self.accuracy/10000))
+            self.Llvl1.append(self.__get_first_level_function__(self.L[:,i]))
             
     
     #Defining next level coeficients :: public
@@ -166,10 +172,14 @@ class Solve(object):
         self.a = np.ndarray(shape=(self.mX,0), dtype=float)
                              
         for i in range(self.dim[3]):
-            a_1 = self.__minimize_equation__(self.Llvl1[i][:, :self.degf[0]], np.log(self.Y[:, i] + 1 + self.accuracy/10000))
-            a_2 = self.__minimize_equation__(self.Llvl1[i][:, self.degf[0]:self.degf[1]],np.log(self.Y[:, i] + 1 + self.accuracy/10000))
-            a_3 = self.__minimize_equation__(self.Llvl1[i][:, self.degf[1]:], np.log(self.Y[:, i] + 1 + self.accuracy/10000))
-            
+            if self.fmode == 1:
+                a_1 = self.__minimize_equation__(self.Llvl1[i][:, :self.degf[0]], np.log(self.f(self.Y[:, i]) + 1 + self.accuracy/10000))
+                a_2 = self.__minimize_equation__(self.Llvl1[i][:, self.degf[0]:self.degf[1]],np.log(self.f(self.Y[:, i]) + 1 + self.accuracy/10000))
+                a_3 = self.__minimize_equation__(self.Llvl1[i][:, self.degf[1]:], np.log(self.f(self.Y[:, i]) + 1 + self.accuracy/10000))
+            else:
+                a_1 = self.__minimize_equation__(self.Llvl1[i][:, :self.degf[0]], np.log(self.Y[:, i] + 1 + self.accuracy/10000))
+                a_2 = self.__minimize_equation__(self.Llvl1[i][:, self.degf[0]:self.degf[1]],np.log(self.Y[:, i] + 1 + self.accuracy/10000))
+                a_3 = self.__minimize_equation__(self.Llvl1[i][:, self.degf[1]:], np.log(self.Y[:, i] + 1 + self.accuracy/10000))
             self.a = np.append(self.a, np.vstack((a_1, a_2, a_3)),axis = 1)
     
     #Basicaly same as first step - just with previous functions :: private
@@ -189,9 +199,10 @@ class Solve(object):
         self.lvl2 = []
         self.Llvl2 = []
         for i in range(self.dim[3]):
-            self.Llvl2.append(np.log(self.f(self.__get_second_level_function__(self.Llvl1[i],self.a[:,i]))+ 1 + self.accuracy/10000))
+
+            self.Llvl2.append(self.__get_second_level_function__(self.Llvl1[i],self.a[:,i]))
             self.lvl2.append(np.exp(self.Llvl2[-1]))
-          
+           
         self.lvl2 = np.array(self.lvl2)
         self.Llvl2 = np.array(self.Llvl2)
         
@@ -201,10 +212,14 @@ class Solve(object):
         self.c = np.ndarray(shape = (len(self.X),0),dtype = float)
         for i in range(self.dim[3]):
             
-            J = np.log(self.f(self.Llvl2[i].T)+1+self.accuracy/10000)
-            A = J@J.T
-            b = J@ self.Y[:,i]
-           
+            if self.fmode ==1:
+                J = self.Llvl2[i].T
+                A = J@J.T
+                b = J@ np.log(self.f(self.Y[:, i]) + 1 + self.accuracy/10000)
+            else:
+                J = self.Llvl2[i].T
+                A = J@J.T
+                b = J@ np.log(self.Y[:, i] + 1 + self.accuracy/10000)
             
             #Gradient descending
             if np.abs(np.linalg.det(A)) < self.accuracy:
@@ -227,16 +242,11 @@ class Solve(object):
         final = np.ndarray(self.Y.shape, dtype = float)
         for j in range(final.shape[1]):
             for i in range(final.shape[0]):
-                if self.fmode == 1:
-                    #linear combination in multiplicator thing
-                    final[i,j] = self.Llvl2[j][i,:] @ self.c[:,j]
-                else:
-                    #linear combination
-                    final[i,j] = self.lvl2[j][i,:] @ self.c[:,j]
-        if self.fmode == 1:
-            self.final = np.exp(np.array(final)) - 1 - self.accuracy/10000
-        else:
-            self.final = np.array(final)
+                final[i,j] = self.Llvl2[j][i,:] @ self.c[:,j]
+     
+  
+        self.final = np.exp(np.array(final)) - 1 - self.accuracy/10000
+     
             
         self.norm_error = np.abs(self.Y - self.final).max(axis=0).tolist()
         
